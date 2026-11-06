@@ -1,4 +1,5 @@
 #include <iostream>
+#include<set>
 using namespace std;
 
 // two sum
@@ -85,6 +86,73 @@ int kthlargest(vector<int> nums,int k){
     return largest;
     
 }
+
+// UNION OF TWO SORTED ARRAY 
+// brute method
+
+vector<int> unionofarr (vector<int> a, vector<int> b){
+    int m= a.size(), n= b.size();
+    set<int> s;
+    vector<int> temp;
+
+    for(int i =0;i<m;i++){
+        s.insert(a[i]);
+    }
+
+    for(int i=0;i<n;i++){
+        s.insert(b[i]);
+    }
+    for(auto i:s){
+        temp.push_back(i);
+    }
+    return temp;
+
+}
+
+// optimal approach
+
+vector<int> unionarr(vector<int> a, vector<int> b){
+    int n= a.size();
+    int m= b.size();
+    vector<int> unionarr;
+
+    int x=0;
+    int y=0;
+
+    while(x<n && y<m){
+        if(a[x]<= b[y]){
+            if(unionarr.size() ==0 || unionarr.back() != a[x]){
+                unionarr.push_back(a[x]);
+            }
+             x++;
+        }
+        else{
+            if(unionarr.size() ==0 || unionarr.back() != b[y]){
+                unionarr.push_back(b[y]);
+            }
+            y++;
+        }
+
+    }
+
+    while(x<n){
+        if(a[x]<= b[y]){
+            if(unionarr.size() ==0 || unionarr.back() != a[x]){
+                unionarr.push_back(a[x]);
+            }
+             x++;
+    }
+}
+
+while( y<m){
+    if(unionarr.size() ==0 || unionarr.back() != b[y]){
+                unionarr.push_back(b[y]);
+            }
+            y++;
+
+}
+return unionarr;
+
 
 
 int main(){
