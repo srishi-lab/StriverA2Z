@@ -177,7 +177,33 @@ void movezero(int arr[],int n){
 
 // UNION OF TWO SORTED ARRAYS
 
-
+// plus one to any array
+class Solution {
+public:
+    vector<int> plusOne(vector<int>& digits) {
+        // first reverse then add then reverse
+        reverse(digits.begin(),digits.end());
+        int i=0;
+        int carry=1;
+        while(i<digits.size())
+        {
+            digits[i]+=carry;
+            if(digits[i]<10){
+                reverse(digits.begin(),digits.end());
+                return digits;
+            }
+            digits[i++]=0;
+            carry=1;
+        }
+        if(carry==1){
+            digits.push_back(1);
+            reverse(digits.begin(),digits.end());
+            return digits;
+        }
+        return digits;
+        
+    }
+};
 
 int main(){
     int arr[10] ={5,0,0,1,2,0,3,4,0,5};
