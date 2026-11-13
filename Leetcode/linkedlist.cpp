@@ -1,4 +1,5 @@
 #include <iostream>
+#include<map>
 using namespace std;
 
 //  Definition for singly-linked list.
@@ -795,6 +796,831 @@ ListNode* add1(ListNode* head){
     
 }
 
+// find the intersection of y ll 
+// brute force using hash map
+ListNode* intersect(ListNode* head1, ListNode* head2){
+    map<ListNode*, int> mp;
+    ListNode* temp1= head1; // any of them 
+    while(temp1){
+        mp[temp1]++;
+        temp1= temp1->next;
+    } // all node stored
+    temp1= head2;
+    // for(auto i:mp){ // we have to traverse in second ll not in map
+    while(temp1){
+        if(mp.find(temp1)!= mp.end()){
+            return temp1;
+        }
+        temp1= temp1->next;
+    }
+    return nullptr;
+} // tc= n1+n2  ; sc = n1 or n2
+
+// optimal approach 
+ListNode* intersect (ListNode* head1,ListNode* head2){
+    // findout how much other node is greater and move smaller node with diff after then when both starting point will same the move one by one and first common node will be the answer
+    // findout sizes
+    int size1=0,size2=0;
+    ListNode* temp = head1;
+    
+    while(temp){
+        size1++;
+        temp= temp->next;
+    }
+    temp= head2;
+    while(temp){
+        size2++;
+        temp= temp->next;
+    }
+     ListNode* move1 = head1;
+     ListNode*move2 = head2;
+
+    if(size1>size2){
+        // move head1 node with size1- size2 steps
+        int diff = size1- size2;
+        while(diff--){
+            move1= move1->next;
+        }
+    }
+    else{
+        int diff= size2-size1;
+        while(diff--){
+            move2= move2->next;
+        }
+        
+    }
+     // now move 1 and move2 both are same so move both by one step untill the same node found
+// now move 2 nd 1 are same move gradually 
+        while(move1 != move2){
+            move1= move1->next;
+            move2= move2->next;
+
+        }
+             return move1;
+} // tc= n+m sc=1
+
+//more optimal approach
+ListNode* intersect(ListNode* head1,ListNode* head2){
+    // point pointers at heads move whenever any reach null point to opposite head again move then if find equal node that be ans otherwise null will be answer
+    ListNode* temp1= head1;
+    ListNode* temp2= head2;
+
+    while(temp1 != temp2){
+        (temp1) ? temp1= temp1->next:temp1= head2;
+        (temp2)? temp2= temp2->next: temp2= head1;
+    }
+    return temp1;
+}
+
+// find the middle of ll 
+// brute force
+ListNode* middlenode(ListNode* head){
+    if(head== nullptr || head->next== nullptr) return head;
+    // using mid = n/2 +1 method
+    // find size then use mid method 
+    int size= 0;
+    ListNode* temp= head;
+    while(temp){
+        size++;
+        temp= temp->next;
+    }
+    int mid= size/2 +1;
+    temp= head;
+    while(--mid){
+        temp= temp->next;
+    }
+    return temp;
+}
+
+// using slow and fast pointer
+ListNode* middlenode(ListNode* head){
+    ListNode* slow= head;
+    ListNode* fast= head;
+    // when fast will reach at last slow will be at mid for odd size and for even size ll fast willl be at null when slow had reached mid
+    while(fast != nullptr && fast->next!= nullptr){
+        slow= slow->next;
+        fast= fast->next->next;
+    }
+    return slow;
+}
+
+// detect a loop in ll
+// brute force usinf hashing map
+bool haveloop(ListNode* head){
+    map<ListNode*,int> mp;
+    ListNode* temp= head;
+    while(temp){
+        if(mp.find(temp)!= mp.end()){
+            return true;
+        }
+        mp[temp]++;
+        temp= temp->next;
+    }
+    return false;
+}
+
+// using slow fast pointer approach
+bool haveloop(ListNode* head){
+    if(head== nullptr) return false;
+    ListNode* slow= head;
+    ListNode* fast= head;
+    while(fast != nullptr && fast->next!= nullptr){
+        fast=fast->next->next;
+        slow= slow->next;
+        if(slow== fast) return true;
+    }
+    return false;
+}
+
+// node from where loop starts
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        // brute force by using map
+        map<ListNode*,int> mp;
+        ListNode* temp= head;
+        while(temp){
+            if(mp.find(temp)!= mp.end()){
+                return temp;
+            }
+            mp[temp]++;
+            temp= temp->next;
+        }
+        return nullptr;
+
+        
+    }
+};
+// optimal approach using fast and slow pointers 
+ListNode *detectCycle(ListNode *head) {
+        if(head== nullptr || head->next==nullptr) return nullptr;
+        // usign slow fast
+        ListNode* slow= head;
+        ListNode* fast= head;
+         // note down when they meet first time then point fast to head and move single step next time meetup node will be the answer
+        while(fast!= nullptr && fast->next!= nullptr){
+            fast= fast->next->next;
+            slow= slow->next;
+            if(slow== fast) break;
+        }
+        if(slow==fast){
+            fast= head;
+            while(fast != slow){
+            fast= fast->next;
+            slow= slow->next;
+        }
+        return slow;
+        }
+        return nullptr;
+        
+        
+    }
+};
+
+// length of the loop
+int looplength(ListNode* head){
+    // brute force using map
+    map<ListNode*,int> mp;
+    ListNode*temp= head;
+    int count=0;
+    while(temp){
+        if(mp.find(temp)!= mp.end()){
+            // means it has visited them takeit count and findout lenght
+            int value= mp[temp];
+            return value- count;
+        }
+        mp[temp] = count++;
+        temp= temp->next;
+
+    }
+    return 0;
+} // tc = n+ nlogn ; sc= n
+
+//optimal approach using slow and fast pointer
+int findlength(ListNode* slow, ListNode* fast){
+    int count =1;
+    fast= fast->next;
+    while(slow!= fast){
+        fast=fast->next;
+        count++;
+    }
+    return count;
+}
+int looplength(ListNode* head){
+    ListNode* slow= head;
+    ListNode* fast= head;
+    
+    while(fast!= nullptr && fast->next!= nullptr){
+        fast= fast->next->next;
+        slow= slow->next;
+        if(slow== fast) return findlength(slow,fast);
+    }
+    return 0;
+} // tc= n ; sc= 1;
+
+// delete the middle node of ll
+// using brute method
+ListNode* dltmiddle(ListNode* head){
+    if(head== nullptr) return nullptr;
+    if(head->next== nullptr) {delete head; return nullptr;}
+    // findout n/2th node and dlt node->next and point it to node->next->next
+    int size=0;
+    ListNode*temp = head;
+    while(temp){
+        size++;
+        temp = temp->next;
+    }
+    int b4mid = size/2;
+    // find that node and do operation
+    temp= head;
+    while(--b4mid){
+        temp= temp->next;
+    }
+    ListNode* nodetodlt= temp->next;
+    temp->next= temp->next->next;
+    delete nodetodlt;
+    return head;
+} // tc= n+ n/2 two traversal ; sc= 1
+
+// optimal approach using slow nd fast pointers
+ListNode* dltmiddle(ListNode* head){
+    if(head== nullptr) return nullptr;
+    if(head->next== nullptr) {delete head; return nullptr;}
+    
+     ListNode* slow= head;
+     ListNode* fast= head;
+
+     // we have to don't let move to slow one time then it will automatically be before middle when fast had reched null for even length and at last for odd lenght
+     fast= fast->next->next;
+     while(fast != nullptr && fast->next!= nullptr){
+        fast= fast->next->next;
+        slow= slow->next;
+     }
+     ListNode* nodetodlt= slow->next;
+     slow->next= slow->next->next;
+     delete nodetodlt;
+     return head;
+} // tc= n one traversal ; sc= 1;
+
+// dlt all occurance of given ket in dll 
+ListNode* dltkey(ListNode* head,int key){
+    // take node curr, prev and next and do operations
+    ListNode* curr= head;
+    
+    while(curr){
+        
+        if(curr->val==key){
+            if(curr==head){
+                head= curr->next;
+            }
+            ListNode* forward= curr->next;
+            ListNode* prevnode= curr->prev;
+           
+            if(forward) forward->prev= prevnode;
+            if(prevnode) prevnode->next= forward;
+
+            delete curr;
+            curr= forward;
+        }
+        else{
+             curr= curr->next;
+        }
+    }
+    return head;
+}
+// 
+// deleting all key value occurance in single ll 
+class Solution {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+        if(head==nullptr) return nullptr;
+
+        ListNode* curr= head;
+        ListNode* prev= nullptr;
+
+        while(curr){
+            
+            if(curr->val==val){
+                ListNode* forward = curr->next;
+                // if dlt to head position
+                if(curr==head){
+                    head= curr->next;
+                }
+                // other than head node
+                delete curr;
+                curr= forward;
+                  if(prev) prev->next= curr;
+                // if(forward) forward->next; // no need of doing this twice
+                
+            }
+            else{
+                prev= curr;
+                curr= curr->next;;
+                
+            }
+        }
+        return head;
+        
+    }
+};
+
+// find two sum pairs in  sorted dll
+vector<vector<int>> twosumpair(ListNode* head,int sum){
+      vector<vector<int>> ans;
+    if(head== nullptr) return ans;
+    // using brute force 
+  
+    ListNode* temp1= head;
+    while(temp1){
+        ListNode* temp2= temp1->next;
+        while(temp2!= nullptr && (temp1-> val+ temp2->val) <=sum){
+            if(temp1->val+ temp2->val == sum){
+                ans.push_back({temp1->val,temp2->val});
+            }
+            temp2= temp2->next;
+        }
+        temp1= temp1->next;
+    }
+    return ans;
+}
+
+// using optimal approach using two pointers
+
+// finatale functino 
+ListNode* findtale(ListNode* head){
+    ListNode* temp= head;
+    while(temp->next){
+        temp= temp->next;
+    }
+    return temp;
+}
+vector<vector<int>> twosumpair(ListNode* head,int sum){
+    vector<vector<int>> ans;
+    if(head== nullptr || head->next== nullptr) return ans;
+    ListNode* left= head;
+    ListNode* right= findtale(head);
+
+    // while(left->val <right->val){ 
+    while(left!= right && left->prev != right){
+        if(left->val+ right->val == sum){
+            ans.push_back({left->val, right->val});
+            left= left->next;
+            right= right->prev;
+        }
+        else if(left->val+ right->val <sum){
+            left= left->next;
+        }
+        else{
+            right= right->prev;
+        }
+    }
+    
+    return ans;
+}
+
+// remove duplicated in sorted dll
+ListNode* removedupli(ListNode* head){
+    ListNode* curr= head;
+    while(curr!= nullptr && curr->next != nullptr ){
+        ListNode* nextnode= curr->next;
+        while(nextnode!= nullptr && nextnode->val== curr->val){
+            ListNode* duplicate= nextnode;
+            nextnode= nextnode->next;
+            delete duplicate;
+        }
+        curr->next==nextnode;
+        if(nextnode) nextnode->prev= curr;
+
+        curr= curr->next;   
+
+    }
+    return head;
+}
+
+// maximum twin sum of ll #2130
+class Solution {
+    private: 
+    ListNode* reverse(ListNode* head){
+        // base case
+        if(head==nullptr || head->next == nullptr) return head;
+
+        ListNode* newnode= reverse(head->next);
+        ListNode* front = head->next;
+        front->next= head;
+        head->next= nullptr;
+        return newnode;
+    }
+public:
+    int pairSum(ListNode* head) {
+        // findout b4middle node then reverse 2nd part and initialise two pointer move further and store sum
+        int size=0;
+        ListNode* temp= head;
+        while(temp){
+            size++;
+            temp= temp->next;
+        }
+        //now find b4middle node
+        int mid= size/2;
+        temp=head;
+        while(--mid){
+            temp= temp->next;
+        }
+        ListNode* newhead = reverse(temp->next);
+        ListNode* temp1= head;
+        ListNode* temp2= newhead;
+
+        int maxi= INT_MIN;
+        while(temp2){
+            maxi =max(maxi,temp1->val + temp2->val);
+            temp1= temp1->next;
+            temp2= temp2->next;
+        }
+        reverse(newhead);
+        return maxi;
+        
+    }
+};
+
+// remove duplicated from sorted ll #82
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+         if(head==nullptr) return nullptr;
+         if(head->next == nullptr){
+            return head;
+         }
+        ListNode* curr= head;
+        ListNode* prev= nullptr;
+       
+
+        while(curr != nullptr && curr->next != nullptr ){
+            ListNode* nextnode= curr->next;
+            if(curr->val == nextnode->val){
+                while(nextnode!= nullptr && nextnode->val==curr->val){
+                    ListNode* nodetodlt = nextnode;
+                    nextnode= nextnode->next;
+                    delete nodetodlt;
+
+                }
+                if(curr==head){
+                    ListNode* nodetodlt= head;
+                    head= nextnode;
+                    curr= head;
+                    delete nodetodlt;
+                }
+                else{
+                    ListNode* nodetodlt =curr;
+                    prev->next=nextnode;
+                    curr= nextnode;
+                    delete nodetodlt;
+                }
+            }
+            else{
+                prev=curr;
+                curr= curr->next;
+            }
+        }
+        return head;
+        
+    }
+};
+
+// SWAP NODES IN PAIR #24
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if(head==nullptr || head->next==nullptr) return head;
+        // take two pointers and swap them continue this process untill find null one of them
+        ListNode* curr=head;
+        ListNode* prev= nullptr;
+
+        while(curr!=nullptr && curr->next!= nullptr){
+            ListNode* forward = curr->next;
+            // we have to reverse curr and forward 
+            // head edge case
+            if(curr==head){
+                curr->next= forward->next;
+                forward->next= curr;
+                head= forward;
+            }
+            else{
+                prev->next= forward;
+                curr->next= forward->next;
+                forward->next= curr;  
+            }
+            prev= curr;
+            curr=curr->next;
+        }
+        return head;
+    }
+};
+
+// optimal approach 
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if(head== nullptr || head->next== nullptr) return head;
+        // taking a dummy node
+        ListNode* dummy = new ListNode(-1);
+        ListNode* prev= dummy;
+        ListNode* curr= head;
+
+        while(curr!= nullptr && curr->next != nullptr){
+            ListNode* forward = curr->next;
+
+            prev->next= forward;
+            curr->next= forward->next;
+            forward->next= curr;
+
+            prev= curr;
+            curr= curr->next;
+        }
+        return dummy->next;
+    }
+};
+
+// merge two sorted ll
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        //edge case
+        if(list1== nullptr) return list2;
+        if(list2==nullptr) return list1;
+        if(list1==nullptr && list2== nullptr) return nullptr;
+
+        ListNode* dummy= new ListNode(-1);
+        ListNode* temp= dummy;
+
+        ListNode* temp1= list1;
+        ListNode* temp2= list2;
+
+        while(temp1 != nullptr && temp2!= nullptr){
+            if(temp1->val > temp2->val){
+                ListNode* forward2= temp2->next;
+                temp2->next= nullptr;
+                temp->next= temp2;
+                temp2= forward2;
+                 temp= temp->next;
+                
+            }
+            else{
+                ListNode* forward1= temp1->next;
+                temp1->next= nullptr;
+                temp->next= temp1;
+                temp1= forward1;
+                 temp= temp->next;
+              
+
+            }
+        }
+        if(temp1!= nullptr){
+                temp->next= temp1;
+        }
+        if(temp2!= nullptr){
+            temp->next= temp2;
+        }
+        return dummy->next;
+        
+    }
+};
+
+// reverse k pair node #25
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+    private: // reverse in given range 
+        ListNode* reverse(ListNode* s,ListNode* e){
+            if(s==e) return e;
+
+            ListNode* newhead= reverse(s->next,e);
+            ListNode* front= s->next;
+            front->next= s;
+            s->next= nullptr;
+            return newhead;
+        }
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        
+        if(head==nullptr || head->next ==nullptr) return head;
+        // using reversing method
+        ListNode* dummy = new ListNode(-1);
+        ListNode* prev= dummy;
+        ListNode* curr= head;
+        int count=0;
+        while(curr){
+            // first reverse in k pair then move curr after k step
+            // find node after k step
+            ListNode* enode= curr;
+            count =k;
+            while(--count && enode!=nullptr){
+                enode= enode->next;  
+            }
+            if(count!=0 || enode==nullptr) return dummy->next; // means not reached after k step
+            else {
+                // reverse the list and point
+                ListNode* newend = enode->next; 
+                ListNode* newhead=reverse(curr,enode);
+                prev->next= newhead;
+                curr->next= newend;
+
+                prev= curr;
+                curr= newend;
+
+            }
+        }
+        return dummy->next;
+    }
+};
+// partition list #86
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* partition(ListNode* head, int x) {
+        if(head== nullptr || head->next== nullptr) return head;
+        // we have to create two list one having lesser and other have greater and equal to x 
+        ListNode* dummy1= new ListNode(-1);
+        ListNode* dummy2= new ListNode(-1);
+
+        ListNode* lesser= dummy1;
+        ListNode* greater= dummy2;
+        
+        ListNode* temp= head;
+        while(temp){
+            if(temp->val <x){
+                ListNode* forward = temp->next;
+                temp->next= nullptr;
+                lesser->next= temp;
+                lesser = lesser->next;
+                temp= forward; 
+            }
+            else{
+                ListNode* forward = temp->next;
+                temp->next= nullptr;
+                greater->next= temp;
+                greater = greater->next;
+                temp= forward;  
+            }
+        }
+        // connect both lists
+        lesser->next= dummy2->next;
+        ListNode* newhead = dummy1->next;
+        delete dummy1;
+        delete dummy2;
+        return newhead;
+        
+    }
+};
+
+// reorder list # 143 
+// if return type if Listnode* type 
+class Solution {
+    private: 
+    ListNode* reverse(ListNode* head){
+        if(head== nullptr || head->next == nullptr) return head;
+
+        ListNode* newhead = reverse(head->next);
+        ListNode* front= head->next;
+        front->next= head;
+        head->next= nullptr;
+        return newhead;
+    }
+public:
+    ListNode* reorderList(ListNode* head) {
+        if(head== nullptr || head->next==nullptr) return head;
+        // findout middle and take two pointers and move them simultationaly 
+    ListNode* slow= head;
+    ListNode* fast= head;
+    while(fast != nullptr && fast->next != nullptr){
+        slow= slow->next;
+        fast= fast->next->next;
+    }
+    // slow will be the middle node 
+    ListNode* newhead= reverse(slow->next);
+    ListNode* temp1= head;
+    ListNode* temp2= newhead;
+
+ListNode* dummy = new ListNode(-1);
+ListNode* temp= dummy;
+    while(temp2){
+        // first store temp1 
+        ListNode* next1= temp1->next;
+        temp1->next= nullptr;
+        temp->next= temp1;
+        temp= temp->next;
+        temp1= next1;
+
+        // now store temp2
+        ListNode* next2= temp2->next;
+        temp2->next= nullptr;
+        temp->next= temp2;
+        temp= temp->next;
+        temp2= next2;
+    }
+    // one last node in odd length cases
+    if(temp1){
+        temp1->next =nullptr;
+        temp->next = temp1;
+    }
+        ListNode* newhead1= dummy->next;
+        delete dummy;
+        return newhead1;
+    }
+};
+
+// optimal approach 
+class Solution {
+    private: 
+    ListNode* reverse(ListNode* head){
+        if(head==nullptr || head->next == nullptr) return head;
+
+        ListNode* newhead= reverse(head->next);
+        ListNode* front= head->next;
+        front->next= head;
+        head->next= nullptr;
+        return newhead;
+    }
+public:
+    void reorderList(ListNode* head) {
+        if(head==nullptr || head->next==nullptr || head->next->next==nullptr) return;
+        else{
+
+                // take two pointer first on head and second on reversed part of middle list 
+        // connect both first node and so on
+        ListNode* fast= head;
+        ListNode* slow= head;
+    
+        while(fast!=nullptr && fast->next != nullptr){
+            fast= fast->next->next;
+            slow= slow->next;
+        }
+        ListNode* newhead= reverse(slow->next);
+         slow->next= nullptr;
+        ListNode* temp1= head;
+        ListNode* temp2= newhead;
+// we have slow , temp1 , temp2 
+       
+
+        while(temp2 != nullptr && temp1 !=nullptr){
+            ListNode* nexttemp1= temp1->next;
+            ListNode* nexttemp2= temp2->next;
+
+            temp2->next= temp1->next;
+            temp1->next= temp2;
+            
+            temp1= nexttemp1;
+            temp2= nexttemp2;
+        }
+        
+        } 
+    }
+};
+
+// ROTATE A LINKED LIST 
+ListNode* rotate(ListNode* head,int k){
+    if(head==nullptr || head->next== nullptr) return head;
+    // point tale to head and make size-k node to tale and it's next to head and return this head
+int size=0;
+ListNode* temp= head;
+while(temp){
+    size++;
+    temp=temp->next;
+}
+if(k%size==0) return head;
+k= k%size;
+ int n= size-k;
+ temp= head;
+ while(--n)
+ {
+    temp= temp->next;
+    
+ }
+
+ ListNode* newhead= temp->next;
+ListNode * tale= head;
+while(tale->next){
+    tale= tale->next;
+}
+tale->next= head;
+temp->next= nullptr;
+return newhead;
+}
 int main(){
 
 }
