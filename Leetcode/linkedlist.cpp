@@ -975,7 +975,7 @@ ListNode *detectCycle(ListNode *head) {
         
         
     }
-};
+
 
 // length of the loop
 int looplength(ListNode* head){
@@ -1074,10 +1074,10 @@ ListNode* dltkey(ListNode* head,int key){
                 head= curr->next;
             }
             ListNode* forward= curr->next;
-            ListNode* prevnode= curr->prev;
+            // ListNode* prevnode= curr->prev;
            
-            if(forward) forward->prev= prevnode;
-            if(prevnode) prevnode->next= forward;
+            // if(forward) forward->prev= prevnode;
+            // if(prevnode) prevnode->next= forward;
 
             delete curr;
             curr= forward;
@@ -1154,48 +1154,48 @@ ListNode* findtale(ListNode* head){
     }
     return temp;
 }
-vector<vector<int>> twosumpair(ListNode* head,int sum){
-    vector<vector<int>> ans;
-    if(head== nullptr || head->next== nullptr) return ans;
-    ListNode* left= head;
-    ListNode* right= findtale(head);
+// vector<vector<int>> twosumpair(ListNode* head,int sum){
+//     vector<vector<int>> ans;
+//     if(head== nullptr || head->next== nullptr) return ans;
+//     ListNode* left= head;
+//     ListNode* right= findtale(head);
 
-    // while(left->val <right->val){ 
-    while(left!= right && left->prev != right){
-        if(left->val+ right->val == sum){
-            ans.push_back({left->val, right->val});
-            left= left->next;
-            right= right->prev;
-        }
-        else if(left->val+ right->val <sum){
-            left= left->next;
-        }
-        else{
-            right= right->prev;
-        }
-    }
+//     // while(left->val <right->val){ 
+//     while(left!= right && left->prev != right){
+//         if(left->val+ right->val == sum){
+//             ans.push_back({left->val, right->val});
+//             left= left->next;
+//             right= right->prev;
+//         }
+//         else if(left->val+ right->val <sum){
+//             left= left->next;
+//         }
+//         else{
+//             right= right->prev;
+//         }
+//     }
     
-    return ans;
-}
+//     return ans;
+// }
 
-// remove duplicated in sorted dll
-ListNode* removedupli(ListNode* head){
-    ListNode* curr= head;
-    while(curr!= nullptr && curr->next != nullptr ){
-        ListNode* nextnode= curr->next;
-        while(nextnode!= nullptr && nextnode->val== curr->val){
-            ListNode* duplicate= nextnode;
-            nextnode= nextnode->next;
-            delete duplicate;
-        }
-        curr->next==nextnode;
-        if(nextnode) nextnode->prev= curr;
+// // remove duplicated in sorted dll
+// ListNode* removedupli(ListNode* head){
+//     ListNode* curr= head;
+//     while(curr!= nullptr && curr->next != nullptr ){
+//         ListNode* nextnode= curr->next;
+//         while(nextnode!= nullptr && nextnode->val== curr->val){
+//             ListNode* duplicate= nextnode;
+//             nextnode= nextnode->next;
+//             delete duplicate;
+//         }
+//         curr->next==nextnode;
+//         if(nextnode) nextnode->prev= curr;
 
-        curr= curr->next;   
+//         curr= curr->next;   
 
-    }
-    return head;
-}
+//     }
+//     return head;
+// }
 
 // maximum twin sum of ll #2130
 class Solution {
